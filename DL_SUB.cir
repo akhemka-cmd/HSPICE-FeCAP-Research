@@ -1,0 +1,20 @@
+**** DL_SUBCKT.cir - series dielectric dead layer, no leakage
+
+.SUBCKT dl_subckt n_top n_bot
++  Cdl_area=0.35
++  tFE=10e-9  A=7e-9  kappa=35  ep0=8.854187817e-12
++  lambda_1=0.05n  ep_1=8.45  lambda_2=0.05n  ep_2=8.45
++  pz0=-0.111276
++  R_dc=1e15
+
+.param Cdl    = 'Cdl_area*A'
+.param Cbg    = 'ep0*kappa/tFE'
+.param kscr   = '1/(1 + lambda_1/(ep_1*tFE) + lambda_2/(ep_2*tFE))'
+.param Vscr0  = 'pz0*kscr*(lambda_1/ep_1 + lambda_2/ep_2)/ep0'
+.param Vfe0   = '-(pz0/Cdl_area + Vscr0)/(1 + Cbg/Cdl_area)'
+.param Vdl0   = '(Cbg*Vfe0 + pz0)/Cdl_area'
+
+Cdl  n_top n_bot 'Cdl' IC='Vdl0'
+Rdc  n_top n_bot 'R_dc'
+
+.ENDS
