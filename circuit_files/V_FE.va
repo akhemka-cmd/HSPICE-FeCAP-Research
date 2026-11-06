@@ -1,0 +1,48 @@
+//// Verilog-A device module of multi-domain ferroelectrics ////
+
+// 1. extend 1D to 3D in single domain
+// Implemented by Chia-Sheng Hsu, Aug. 2019
+
+
+
+`include "constants.vams"
+`include "disciplines.vams"
+
+module v_fe(p1,p2,Pz);
+
+inout p1, p2, Pz;
+electrical p1, p2, Pz;
+
+branch (p1,p2) fe;
+
+// Universal constants
+parameter real      	ep0	= 8.854187817e-12; //vaccum dielectric constant (F/m)
+
+// Device dimensions
+parameter real 		tFE     = 10e-9		from (0:inf); // FE thickness (m)
+parameter real 		A       = 7e-9 		from (0:inf); // capacitor area (m^2)
+
+// Material parameter
+parameter real		kappa	= 35;
+
+analog begin
+/*
+ *	@(initial_step) begin
+ *	    if(type==1) fid = $fopen("pol_n.dat","w");
+ *	    else if(type==-1) fid = $fopen("pol_p.dat","w");
+ *	end
+ */
+
+	I(fe) <+ ddt( (ep0*kappa*V(fe)/tFE + V(Pz))*A );	
+
+/*
+ *	if (type==1 || type==-1) begin
+ *	$fwrite(fid, "%e %e %e\n", $abstime, V(p1,p2),V(q)/A);
+ *	@(final_step) $fclose(fid);
+ *	end
+ */
+
+end
+    
+endmodule
+

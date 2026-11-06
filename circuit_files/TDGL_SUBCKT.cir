@@ -1,0 +1,20 @@
+.SUBCKT tdgl_subckt  L GFF vz1  vz2
++  pz  pz5  pz6
+
+
+.param dfbulk_dp(p1)='2*alpha_1*p1 + 4*alpha_11*pow(p1,3)
++  + 6*alpha_111*pow(p1,5)'
+
+.param grad2_p(p,p5,p6,dz)=
++  '(p5+p6-2*p)/(dz*dz)'
+
+
+
+C_pz  pz 0  1
+G_pz  0 pz CUR='-(V(L))*( dfbulk_dp(V(pz))
++                  - (V(GFF))*grad2_p(V(pz),V(pz5),V(pz6),dz)
++                  - (-V(vz2,vz1)/(2*dz)/2) )'
+
+
+
+.ENDS

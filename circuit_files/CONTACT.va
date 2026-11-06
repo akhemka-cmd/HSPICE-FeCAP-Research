@@ -1,0 +1,54 @@
+//// Verilog-A device module for metal contacts of ferroelectric capacitors ////
+
+// Implemented by Chia-Sheng Hsu, Oct. 2019
+
+
+
+`include "constants.vams"
+`include "disciplines.vams"
+
+module contact(p1,p2,Pz);
+
+inout p1, p2, Pz;
+electrical p1, p2, Pz;
+
+branch (p1,p2) metal;
+
+// Universal constants
+parameter real      	ep0	= 8.854187817e-12; //vaccum dielectric constant (F/m)
+
+// Device dimensions
+parameter real		tFE	= 10e-9		from (0:inf); // film thickness (m)
+parameter real 		A       = 7e-9 		from (0:inf); // capacitor area (m^2)
+
+// Material parameter
+parameter real		lambda_1 = 1		from [0:inf); // screening length (m)
+parameter real		ep_1	= 1		from (0:inf); // dielectric constant
+parameter real		lambda_2 = 1		from [0:inf); // screening length (m)
+parameter real		ep_2	= 1		from (0:inf); // dielectric constant
+parameter real		con	= 1;
+
+analog begin
+/*
+ *	@(initial_step) begin
+ *	    if(type==1) fid = $fopen("pol_n.dat","w");
+ *	    else if(type==-1) fid = $fopen("pol_p.dat","w");
+ *	end
+ */
+
+if (con==1)
+	V(metal) <+ V(Pz)/(1 + lambda_1/(ep_1*tFE) + lambda_2/(ep_2*tFE))*lambda_1/(ep0*ep_1);
+else if (con==2)	
+	V(metal) <+ V(Pz)/(1 + lambda_1/(ep_1*tFE) + lambda_2/(ep_2*tFE))*lambda_2/(ep0*ep_2);
+
+/*
+ *	if (type==1 || type==-1) begin
+ *	$fwrite(fid, "%e %e %e\n", $abstime, V(p1,p2),V(q)/A);
+ *	@(final_step) $fclose(fid);
+ *	end
+ */
+
+end
+    
+endmodule
+
